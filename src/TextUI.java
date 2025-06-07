@@ -1,4 +1,9 @@
+import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class TextUI {
     private final AppService appService;
@@ -10,8 +15,7 @@ public class TextUI {
     }
 
     public void start() {
-        this.inputFilePath();
-        this.printCow();
+        this.readAnimalFromFile();
     }
 
     public void printCow() {
@@ -33,9 +37,30 @@ public class TextUI {
         System.out.println("   ||     ||                ");
     }
 
-    public void inputFilePath() {
+    public Path inputFilePath() {
         System.out.println("Input the file path:");
         String input = this.scanner.nextLine();
-        System.out.println(input);
+        Path filePath = Paths.get(input);
+        if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
+            return filePath;
+        } else {
+            System.out.println("File not found!");
+        }
+        return null;
+    }
+
+    public void readAnimalFromFile() {
+        Path filePath = this.inputFilePath();
+        if (filePath != null) {
+            try {
+                List<String> lines = Files.readAllLines(filePath);
+                for (String line : lines) {
+                    System.out.println(line);
+                }
+            } catch (IOException e) {
+                System.out.println("Could not read file: " + e.getMessage());
+            }
+        }
+
     }
 }
